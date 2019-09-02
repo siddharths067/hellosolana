@@ -1,0 +1,19 @@
+{
+  "name": "hellosolana",
+  "version": "1.0.0",
+  "description": "A Test program to understand shipping code to Solana Chain",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/siddharths067/hellosolana.git"
+  },
+  "author": "Siddharth Singh",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/siddharths067/hellosolana/issues"
+  },
+  "homepage": "https://github.com/siddharths067/hellosolana#readme"
+}
