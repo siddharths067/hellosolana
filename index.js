@@ -15,6 +15,7 @@ async function main(){
     // Check if the transaction occurred
     const isAllocatedLamports = await connection.confirmTransaction(transactionSignature);
     
+    // Printing Transaction Status
     if(isAllocatedLamports){
         console.log("Account has been allocated Lamports");
     }
@@ -22,7 +23,7 @@ async function main(){
         console.log("Allocation of Lamports has not been completed");
     }
 
-    
+
     
 }
 
