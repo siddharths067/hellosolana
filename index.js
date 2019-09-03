@@ -49,7 +49,6 @@ async function main(){
             break;
         }
         catch (err){
-            attempts--;
             console.log(`Uploading SO failed. Retrying...... (${attempts} attempts left)`);
             console.log(`Reason for Failure ${err.message}`);
         }
