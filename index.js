@@ -10,7 +10,7 @@ async function main(){
 
     // Create a new Public Private Key Pair
     // Request Lamports to the new Accounts
-    const {account, transactionSignature} = await newSystemAccountWithAirdrop(connection, 1000);
+    const {account, transactionSignature} = await newSystemAccountWithAirdrop(connection, 1000000);
     console.log(transactionSignature);
 
     // Check if the transaction occurred
