@@ -11,7 +11,7 @@ async function main(){
 
     // Create a new Public Private Key Pair
     // Request Lamports to the new Accounts
-    const {account, transactionSignature} = await newSystemAccountWithAirdrop(connection, 1000000);
+    const [account, transactionSignature] = await newSystemAccountWithAirdrop(connection, 1000000);
     console.log(transactionSignature);
 
     // Check if the transaction occurred
@@ -69,14 +69,19 @@ async function main(){
 
 
     // Link BPF code to a Public Key
-    const programPublicKey = await newSystemAccountWithAirdrop(
+    const [programPublicKey, ppkt] = await newSystemAccountWithAirdrop(
         connection,
         lamports + fee
     );
 
+    if(await connection.confirmTransaction(ppkt) === false){
+        return;
+    }
+    console.log(`Did it initialize ${programPublicKey}`);
     // A Resident account to allow mapping to your program
     const programAccount = new Account();
 
+    console.log("Creating Transaction helper...");
 
     const transactionHelper = SystemProgram.createAccount(
         programPublicKey.publicKey,
@@ -93,7 +98,11 @@ async function main(){
     ]);
     
     const buffer = Buffer.alloc(layout.span);
+    layout.encode({x:3, y:9, z:27}, buffer)
     
+
+    console.log("Adding to helper...");
+    console.log(buffer.toJSON());
     transactionHelper.add({
         keys: [
             {
@@ -102,15 +111,18 @@ async function main(){
                 isDebitable: true
             }
         ],
-        loadedProgramId,
-        data: layout.encode({x:3, y:9, z:27}, buffer)
+        programId: loadedProgramId,
+        data: buffer
     });
 
     console.log(`Transaction Helper successfully initialized`);
 
-    const payerAccount = newSystemAccountWithAirdrop(connection, 10000);
+    const [payerAccount, pat] = await newSystemAccountWithAirdrop(connection, 10000);
 
     console.log("Sending and awaiting transaction....");
+
+    
+    
     await sendAndConfirmTransaction(connection, transactionHelper, payerAccount, programPublicKey, programAccount);
 
 

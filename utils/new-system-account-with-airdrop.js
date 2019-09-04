@@ -10,5 +10,5 @@ module.exports =  async function newSystemAccountWithAirdrop(
 ) {
   const account = new Account();
   const transactionSignature = await connection.requestAirdrop(account.publicKey, lamports);
-  return {account, transactionSignature};
+  return [account, transactionSignature];
 }
