@@ -1,6 +1,7 @@
 async function main(){
-    const {Account, Connection, BpfLoader} = require(`@solana/web3.js`);
+    const {Account, Connection, BpfLoader, sendAndConfirmTransaction, SystemProgram} = require(`@solana/web3.js`);
     const newSystemAccountWithAirdrop = require(`./utils/new-system-account-with-airdrop`);
+    const BufferLayout = require(`buffer-layout`);
 
     const fs = require(`fs`);
     const {execSync} = require(`child_process`);
@@ -41,11 +42,13 @@ async function main(){
     // Uploading BPF SO
     var attempts = 10;
     console.log(`Attempting (max ${attempts}) to upload SO on Chain`);
+    var loadedProgramId = null;
     while(attempts--){
         try{
             console.log(`Uploading BPF SO`);
             const programId = await BpfLoader.load(connection, account, elf);
             console.log(`The Program Id is : ${programId}`);
+            loadedProgramId = programId;
             break;
         }
         catch (err){
@@ -53,6 +56,65 @@ async function main(){
             console.log(`Reason for Failure ${err.message}`);
         }
     }
+
+    if(!loadedProgramId){
+        console.log(`Program was not loaded, Broski!`);
+        return;
+    }
+
+    // Creating an account to associate with our Executable BPF
+
+    const lamports = 10000;
+    const fee = 100; // TODO use Fee Calculator Object to Calculate Fee
+
+
+    // Link BPF code to a Public Key
+    const programPublicKey = await newSystemAccountWithAirdrop(
+        connection,
+        lamports + fee
+    );
+
+    // A Resident account to allow mapping to your program
+    const programAccount = new Account();
+
+
+    const transactionHelper = SystemProgram.createAccount(
+        programPublicKey.publicKey,
+        programAccount.publicKey,
+        lamports,
+        255,
+        loadedProgramId
+    );
+
+    const layout = BufferLayout.struct([
+        BufferLayout.u32('x'),
+        BufferLayout.u32('y'),
+        BufferLayout.u32('z')
+    ]);
+    
+    const buffer = Buffer.alloc(layout.span);
+    
+    transactionHelper.add({
+        keys: [
+            {
+                pubkey: programAccount.publicKey, 
+                isSigner: true,
+                isDebitable: true
+            }
+        ],
+        loadedProgramId,
+        data: layout.encode({x:3, y:9, z:27}, buffer)
+    });
+
+    console.log(`Transaction Helper successfully initialized`);
+
+    const payerAccount = newSystemAccountWithAirdrop(connection, 10000);
+
+    console.log("Sending and awaiting transaction....");
+    await sendAndConfirmTransaction(connection, transactionHelper, payerAccount, programPublicKey, programAccount);
+
+
+
 }
 
 main();
