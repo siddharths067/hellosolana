@@ -4,7 +4,7 @@ A scratch script which is only meant to linearly illustrate the workflow from co
 
 # Check on Expectations
 
-### Underlined here are the reasons I don't recommend developing a commercial application for the Solana-net yet. Launch your own Test-net if you need a BFTS for your de-centralized applications.
+*Underlined here are the reasons I don't recommend developing a commercial application for the Solana-net yet. Launch your own Test-net if you need a BFTS for your de-centralized applications.*
 
 - Developing for Solana is still a mess, considering its infancy, in addition to it being also subject to my level of intellect and knowledge about the chain at this stage
 - From what I have seen there is a script ```do.sh``` in ```node_modules/\@solana/web3.js/examples```. It is responsible for building your project and then creating a shared object. It does so by also utilising the bpf-sdk folder in the ```web3.js``` folder. You could modify the script according to your wishes so that you don't end up building your RUST BPF project in ```node_modules```
