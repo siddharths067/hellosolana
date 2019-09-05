@@ -40,6 +40,8 @@ async function main(){
     console.log("SO Reading Completed");
 
     // Uploading BPF SO
+    // The reason we need to keep attempting is because Solana doesn't guarantee your program will be loaded
+    // If the transaction doesn't commit and confirm after a certain timeout it won't be loaded
     var attempts = 10;
     console.log(`Attempting (max ${attempts}) to upload SO on Chain`);
     var loadedProgramId = null;
@@ -68,7 +70,7 @@ async function main(){
     const fee = 100; // TODO use Fee Calculator Object to Calculate Fee
 
 
-    // Link BPF code to a Public Key
+    // Bear the cost of trying to store memory
     const [programPublicKey, ppkt] = await newSystemAccountWithAirdrop(
         connection,
         lamports + fee
@@ -78,7 +80,7 @@ async function main(){
         return;
     }
     console.log(`Did it initialize ${programPublicKey}`);
-    // A Resident account to allow mapping to your program
+    // A Resident account to allow signing for your program
     const programAccount = new Account();
 
     console.log("Creating Transaction helper...");
@@ -122,7 +124,7 @@ async function main(){
     console.log("Sending and awaiting transaction....");
 
     
-    
+    // Attempt mechanism is also needed here
     await sendAndConfirmTransaction(connection, transactionHelper, payerAccount, programPublicKey, programAccount);
 
 
