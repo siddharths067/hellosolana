@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/siddharths067/hellosolana#readme",
   "dependencies": {
-    "@solana/web3.js": "^0.19.2",
+    "@solana/web3.js": "^1.77.3",
     "buffer-layout": "^1.2.0"
   }
 }
